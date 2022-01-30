@@ -6,7 +6,7 @@ import logging
 import re
 
 import canros
-import uavcan
+import pyuavcan_v0 as uavcan
 import rospy
 
 # Must be set for the functions in this script to work.

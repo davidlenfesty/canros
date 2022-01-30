@@ -2,7 +2,7 @@ from concurrent.futures import ThreadPoolExecutor   # pip install futures
 import time
 
 import monotonic   # pip install monotonic
-import uavcan
+import pyuavcan_v0 as uavcan
 import rospy
 
 try:

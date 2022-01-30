@@ -3,6 +3,13 @@ UAVCAN to ROS interface.
 
 canros only supports Python 2 at this stage.
 
+## TEMPORARY JANK DUE TO ROS2 PORT
+
+Need to:
+```
+pip install -r requirements.txt
+```
+
 ## Installation
 canros requires [ROS Kinetic](http://wiki.ros.org/kinetic/Installation) and [pyuavcan](http://uavcan.org/Implementations/Pyuavcan/) to be installed.
 
