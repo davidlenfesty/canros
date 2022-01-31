@@ -8,14 +8,18 @@
   <author email="lenfesty@ualberta.ca">David Lenfesty</author>
 
   <!-- ROS2 Migration -->
-  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <build_depend>rosidl_default_generators</build_depend>
   <exec_depend>rosidl_default_runtime</exec_depend>
   <!--- I think this is a generic thing, we aren't dependant on any messasge packages here
   <depend>message_package</depend>
   -->
 
+  <!-- required for installing interfaces -->
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
   <export>
     <!-- Migrating to a pure python pacakge -->
-    <build_type>ament_python</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

@@ -10,6 +10,13 @@ Need to:
 pip install -r requirements.txt
 ```
 
+- Message generation is jank, needs to get split out to another package or something
+- actual server is split out from main package. should get re-integrated in
+
+## Changes due to ROS2 migration
+
+- using this as a library is unsound, not sure if it's a use case to support
+
 ## Installation
 canros requires [ROS Kinetic](http://wiki.ros.org/kinetic/Installation) and [pyuavcan](http://uavcan.org/Implementations/Pyuavcan/) to be installed.
 
@@ -45,7 +52,6 @@ Send a message into the UAVCAN network once every second.
 
 	#!/usr/bin/python
 
-	from __future__ import print_function
 	import canros
 	import rospy
 

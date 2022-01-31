@@ -1,6 +1,16 @@
 from setuptools import setup
+import subprocess as sp
+from pathlib import Path
+import sys
 
 package_name = 'canros'
+
+# Run package generation at build time
+script_path = Path(__file__).parent.absolute() / "scripts/generate.py"
+rc = sp.run(["python3", script_path])
+if rc.returncode != 0:
+    # sp.run() doesn't capture stdout/stderr by default, so no need to print here
+    sys.exit(rc.returncode)
 
 setup(
  name=package_name,
