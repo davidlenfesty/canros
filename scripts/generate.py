@@ -86,6 +86,8 @@ def print_union(fields, f=None):
 	print_field(uavcan.dsdl.parser.Field(union_tag_type, constants.union_tag_field_name), f=f)
 
 def print_msg(constants, fields, union, f=None):
+	print("# Internal field for canros' usage", file=f)
+	print("bool msg_from_canros false", file=f)
 	for const in constants:
 		if const.type.category == const.type.CATEGORY_VOID:
 			continue

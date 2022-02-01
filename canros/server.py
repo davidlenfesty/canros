@@ -49,18 +49,22 @@ class Message(Base, uavcan_msgs.Message):
 		return self.__ros_publisher
 
 	def ROS_Subscribe(self, uavcan_node: uavcan.node.Node, ros_node: Node):
-		def handler(event):
-			if event._connection_header["callerid"] == ros_node.get_name():
-				# The message came from canros so ignore
+		def handler(msg):
+			if msg.msg_from_canros:
 				return
-			uavcan_msg = uavcan_msgs.copy_ros_uavcan(self.UAVCAN_Type(), event)
+
+			#if event._connection_header["callerid"] == ros_node.get_name():
+			#	# The message came from canros so ignore
+			#	return
+			uavcan_msg = uavcan_msgs.copy_ros_uavcan(self.UAVCAN_Type(), msg)
 			uavcan_node.broadcast(uavcan_msg, priority=uavcan.TRANSFER_PRIORITY_LOWEST)
-		self.Subscriber(ros_node, handler, 10)
+		ros_node.create_subscription(self.Type, self.Topic, handler, 10)
 
 	def UAVCAN_Subscribe(self, uavcan_node: uavcan.node.Node, ros_node: Node):
-		self.__ros_publisher = self.Publisher(ros_node, 10)
+		self.__ros_publisher = ros_node.create_publisher(self.Type, self.Topic, 10)
 		def handler(event):
 			ros_msg = uavcan_msgs.copy_uavcan_ros(self.Type(), event.message)
+			ros_msg.msg_from_canros = True
 			if self.HasIdFeild:
 				setattr(ros_msg, constants.uavcan_id_field_name, event.transfer.source_node_id)
 			self.ROS_Publisher.publish(ros_msg)
@@ -99,14 +103,14 @@ class Service(Base, uavcan_msgs.Service):
 		return self.__ros_client
 
 	def ROS_Subscribe(self, uavcan_node: uavcan.node.Node, ros_node: Node):
-		def handler(event):
-			uavcan_req = uavcan_msgs.copy_ros_uavcan(self.UAVCAN_Type.Request(), event, request=True)
+		def handler(msg):
+			uavcan_req = uavcan_msgs.copy_ros_uavcan(self.UAVCAN_Type.Request(), msg, request=True)
 
 			q = Queue(maxsize=1)
 			def callback(event):
 				q.put(event.response if event else None)
 
-			uavcan_id = getattr(event, constants.uavcan_id_field_name)
+			uavcan_id = getattr(msg, constants.uavcan_id_field_name)
 			if uavcan_id == 0:
 				return
 			uavcan_node.request(uavcan_req, uavcan_id, callback, timeout=1)   # Default UAVCAN service timeout is 1 second
@@ -201,7 +205,6 @@ def main(args=None):
 
 	try:
 		blacklist = ros_node.get_parameter('blacklist').get_parameter_value()
-		print(blacklist)
 		if blacklist.type == ParameterType.PARAMETER_STRING:
 			blacklist = list(blacklist.string_value)
 		elif blacklist.type == ParameterType.PARAMETER_STRING_ARRAY:
